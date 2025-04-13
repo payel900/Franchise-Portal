@@ -1,0 +1,43 @@
+/* Global Styles */
+body {
+    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Announcement Card */
+.announcement-card {
+    border-left: 5px solid #007bff;
+    transition: transform 0.2s ease-in-out;
+}
+
+.announcement-card:hover {
+    transform: scale(1.02);
+}
+
+/* Announcement Title */
+.card-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Announcement Text */
+.card-text {
+    font-size: 16px;
+    color: #555;
+}
+
+/* Announcement Date */
+.text-muted {
+    font-size: 14px;
+    font-style: italic;
+}
