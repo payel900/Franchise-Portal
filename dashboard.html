@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franchise Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    
+    
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Portal Logo" class="logo">
+            <h1>Franchise Dashboard</h1>
+        </header>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul>
+                <li onclick="loadPage('Home', '{{ url_for('franchise_home') }}')">Home</li>
+                <li onclick="loadPage('Enrollments', '{{ url_for('enrollment') }}')">Enrollments</li>
+                <li onclick="loadPage('Fees Status', '{{ url_for('fees_status') }}')">Fees Status</li>
+                <li onclick="loadPage('announcements', '{{ url_for('announcements') }}')">
+                    Announcements <span id="announcement-count" class="badge bg-danger">0</span>
+                </li>
+                
+                <li onclick="loadPage('Other Franchise', '{{ url_for('other_franchises') }}')">Other Franchise</li>
+                <li>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="content">
+            <h2>Loading...</h2>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>© AI Coders Junior</p>
+        </footer>
+    </div>
+
+    <script>
+        function loadPage(page, url) {
+            fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('content').innerHTML = html;
+                let items = document.querySelectorAll('.sidebar ul li');
+                items.forEach(item => item.classList.remove('active'));
+                document.getElementById(page).classList.add('active');
+            })
+            .catch(error => console.log('Error:', error));
+        }
+    
+        function updateAnnouncementCount() {
+            fetch("{{ url_for('get_unread_announcements') }}")  // API to fetch unread count
+            .then(response => response.json())
+            .then(data => {
+                const countElement = document.getElementById("announcement-count");
+                if (data.count > 0) {
+                    countElement.textContent = data.count;
+                    countElement.style.display = "inline";  // Show the badge
+                } else {
+                    countElement.style.display = "none";  // Hide if no unread announcements
+                }
+            })
+            .catch(error => console.error("Error fetching unread count:", error));
+        }
+    
+        // Call both functions on page load
+        window.onload = function() {
+            loadPage('Home', '{{ url_for('franchise_home') }}');
+            updateAnnouncementCount();
+            setInterval(updateAnnouncementCount, 30000);  // Refresh every 30 seconds
+        };
+    </script>
+    
+</body>
+</html>

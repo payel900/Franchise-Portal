@@ -1,0 +1,76 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student List</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<h2>Student Enrollment List</h2>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Course</th>
+        <th>Total Fee</th>
+        <th>Fee Paid</th>
+        <th>Actions</th>
+    </tr>
+    {% for student in students %}
+    {% if student.verified %}
+    <tr>
+        <td>{{ student['name'] }}</td>
+        <td>{{ student['email'] }}</td>
+        <td>{{ student['phone'] }}</td>
+        <td>{{ student['course'] }}</td>
+        <td>{{ student['total_fee'] }}</td>
+        <td>{{ student['paid_fee'] }}</td>
+        <td>
+            <a href="{{ url_for('edit_student', student_id=student['id']) }}">Edit</a> |
+            <a href="{{ url_for('delete_student', student_id=student['id']) }}" onclick="return confirm('Are you sure?')">Delete</a>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+
+<!-- Table for Unverified Students -->
+<h4 class="mt-5 text-danger">Pending Verification</h4>
+<table class="table table-bordered">
+    <thead class="table-warning">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Total Fee</th>
+            <th>Fee Paid</th>
+            <th>Verify</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+            {% if not student.verified %}
+                <tr>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.phone }}</td>
+                    <td>{{ student.course }}</td>
+                    <td>{{ student.total_fee }}</td>
+                    <td>{{ student.paid_fee }}</td>
+                    <td>
+                        <form action="{{ url_for('verify_student', student_id=student.id) }}" method="POST">
+                            <button type="submit" class="btn btn-success btn-sm">Verify</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<a href="{{ url_for('franchise_dashboard') }}">Back to Dashboard</a>
+
+</body>
+</html>

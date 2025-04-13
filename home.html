@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franchise Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+<body>
+    <div class="main-content">
+        <h2>{{ franchise['institution_name'] }}</h2>
+        <div class="franchise-details">
+            <p><strong>Address:</strong> {{ franchise['address'] }}</p>
+            <p><strong>Owner Name:</strong> {{ franchise['owner_name'] }}</p>
+            <p><strong>Contact:</strong> {{ franchise['contact'] }}</p>
+        </div>
+
+        <hr> <!-- Bar Line -->
+
+        <h3>Student Enrollment</h3>
+
+        <table border="1" style="margin-top: 10px; width: 50%;">
+            <tr>
+                <th>Month</th>
+                <th>No. of Students</th>
+            </tr>
+            <tr>
+                <td>
+                    <select id="monthDropdown" onchange="fetchStudentCount()">
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="August">August</option>
+                        <option value="September">September</option>
+                        <option value="October">October</option>
+                        <option value="November">November</option>
+                        <option value="December">December</option>
+                    </select>
+                </td>
+                <td id="studentCount">Loading...</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        function fetchStudentCount() {
+            var dropdown = document.getElementById("monthDropdown");
+            var studentCountElement = document.getElementById("studentCount");
+        
+            if (!dropdown) {
+                console.error("Error: monthDropdown element not found!");
+                return;
+            }
+            if (!studentCountElement) {
+                console.error("Error: studentCount element not found!");
+                return;
+            }
+        
+            var selectedMonth = dropdown.value;
+            console.log("Selected Month:", selectedMonth);
+        
+            fetch(/get_student_count?month=${selectedMonth})
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(HTTP error! Status: ${response.status});
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Received Data:", data);
+                    studentCountElement.innerText = data.count !== undefined ? data.count : "0";
+                })
+                .catch(error => {
+                    console.error("Error fetching student count:", error);
+                    studentCountElement.innerText = "Error fetching data";
+                });
+        }
+        
+        // Run the function after the page loads
+        window.onload = function() {
+            fetchStudentCount();
+        };
+        
+        
+    </script>
+</body>
+</html>

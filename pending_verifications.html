@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Verifications</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <script>
+        function toggleDropdown(id) {
+            // Hide all other franchise tables
+            document.querySelectorAll('.student-list').forEach((el) => {
+                if (el.id !== id) {
+                    el.classList.add("d-none");
+                }
+            });
+
+            // Toggle selected franchise table
+            var dropdown = document.getElementById(id);
+            dropdown.classList.toggle("d-none");
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container mt-4">
+        <h2 class="text-center text-danger">Pending Student Verifications</h2>
+
+        {% for franchise in franchises %}
+        <div class="card mt-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="m-0">{{ franchise['institution_name'] }}</h5>
+                <button class="btn btn-info" onclick="toggleDropdown('students_{{ franchise.id }}')">
+                    Show Pending Students
+                </button>
+                
+                
+            </div>
+            
+            <div id="students_{{ franchise['id'] }}" class="card-body d-none student-list">
+                {% if franchise['students'] %}
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Course</th>
+                            <th>Total Fee</th>
+                            <th>Fee Paid</th>
+                            <th>Pending Changes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in franchise['students'] %}
+                        <tr>
+                            <td>{{ student['id'] }}</td>
+                            <td>{{ student['name'] }}</td>
+                            <td>{{ student['email'] }}</td>
+                            <td>{{ student['phone'] }}</td>
+                            <td>{{ student['course'] }}</td>
+                            <td>{{ student['total_fee'] }}</td>
+                            <td>{{ student['paid_fee'] }}</td>
+                            <td>{{ student['total_fee'] - student['paid_fee'] }}</td>
+                            <td>
+                                {% if not student.verified %}
+                                    Unverified
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ url_for('verify_student', student_id=student['id']) }}">
+                                    <button type="submit" class="btn btn-success btn-sm">Verify</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No pending students for this franchise.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+    </div>
+
+</body>
+</html>
+

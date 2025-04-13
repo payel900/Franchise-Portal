@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Verification</title>
+</head>
+<body>
+    <h2>Pending Student Verifications</h2>
+    <p>Debug: {{ students }}</p> 
+    {% if students %}
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Action</th>
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>{{ student.email }}</td>
+            <td>{{ student.phone }}</td>
+            <td>{{ student.course }}</td>
+            <td>
+                <form action="{{ url_for('verify_student', student_id=student.id) }}" method="post">
+                    <button type="submit">Verify</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No pending verifications.</p>
+    {% endif %}
+
+</body>
+</html>

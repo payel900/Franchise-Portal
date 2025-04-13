@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enrollment.css') }}">
+    <title>Student Enrollment</title>
+    
+
+    <script>
+        function toggleEnrollmentForm() {
+            var formDiv = document.getElementById("enrollmentForm");
+            if (formDiv) {
+                formDiv.style.display = (formDiv.style.display === "none" || formDiv.style.display === "") ? "block" : "none";
+            } else {
+                console.log("Enrollment form not found.");
+            }
+        }
+    </script>
+    
+</head>
+<body>
+
+    <h2>Student Enrollment List</h2>
+
+    <!-- ✅ Ensure the button appears -->
+    <a href="{{ url_for('add_student') }}" class="enroll-btn">Enroll New Student</a>
+
+
+    <!-- Enrollment Form (Initially Hidden) -->
+    <div id="enrollmentForm" style="display: none;">
+        <h3>Enroll a Student</h3>
+        <form action="{{ url_for('enrollment') }}" method="POST">
+            <label>Name:</label>
+            <input type="text" name="name" required>
+
+            <label>Email:</label>
+            <input type="email" name="email" required>
+
+            <label>Phone:</label>
+            <input type="text" name="phone" required>
+
+            <label>Course:</label>
+            <input type="text" name="course" required>
+
+            <label>Total Fee:</label>
+        <input type="number" name="total_fee" required>    
+        <label>Fee Paid:</label>
+        <input type="number" name="paid_fee" required>
+
+            <button type="submit">Enroll</button>
+        </form>
+    </div>
+
+    <!-- Student List -->
+    <table border ="1">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Total Fee</th>
+            <th>paid_fee</th>
+            <th>Remaining Fee</th>
+            <th>Actions</th>
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student['name'] }}</td>
+            <td>{{ student['email'] }}</td>
+            <td>{{ student['phone'] }}</td>
+            <td>{{ student['course'] }}</td>
+            <td>{{ student['total_fee'] }}</td>
+            <td>{{ student['paid_fee'] }}</td>
+            <td>{{ student['fee_remaining'] }}</td>
+            <td>
+                {% if student['verified'] == 1 %}
+                    <span style="color: green; font-weight: bold;">Verified</span>
+                {% else %}
+                    <span style="color: red; font-weight: bold;">Unverified</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('edit_student', student_id=student['id']) }}">Edit</a> |
+                <a href="{{ url_for('delete_student', student_id=student['id']) }}" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+
+    <a href="{{ url_for('franchise_dashboard') }}">Back to Dashboard</a>
+</body>
+</html>
